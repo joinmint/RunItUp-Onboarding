@@ -337,14 +337,14 @@ async function handleSubmit() {
     }
 
     selectedActivities.push({
-      name: act.title,
+      activity: act.title,
       section: SECTION_LABELS[act.section],
       hours: hours,
-      completedDate: dateVal,
+      dateCompleted: dateVal,
       description: descVal,
-      proofData: proofData,
+      proofFileData: proofData,
       proofFileName: proofFileName,
-      proofMimeType: proofMimeType
+      proofFileMime: proofMimeType
     });
   }
 
