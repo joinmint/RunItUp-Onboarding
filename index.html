@@ -319,7 +319,7 @@ function resetForNewSubmission() {
 
   // Clear instructor info
   document.getElementById('instructorName').value = '';
-  document.getElementById('instructorEmail').value = '';
+  document.getElementById('email').value = '';
 
   // Reset all checkboxes, selected state, and detail panels
   for (var i = 0; i < ACTIVITIES.length; i++) {
@@ -328,6 +328,8 @@ function resetForNewSubmission() {
     if (cb) cb.checked = false;
     var item = document.getElementById('item-' + act.id);
     if (item) item.classList.remove('selected');
+    var details = document.getElementById('details-' + act.id);
+    if (details) details.style.display = 'none';
     var dateInput = document.getElementById('date-' + act.id);
     if (dateInput) dateInput.value = '';
     var descInput = document.getElementById('desc-' + act.id);
