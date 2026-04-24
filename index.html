@@ -240,7 +240,7 @@ function renderActivities() {
         '</div>' +
         '<div class="detail-row">' +
           '<label>Proof of Completion (upload file)</label>' +
-          '<input type="file" id="file-' + act.id + '" accept="image/*,.pdf,.doc,.docx">' +
+          '<input type="file" id="file-' + act.id + '" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv">' +
         '</div>' +
       '</div>';
 
@@ -298,7 +298,48 @@ function showAlert(type, message) {
   var box = document.getElementById('alertBox');
   box.className = 'alert ' + type;
   box.innerHTML = message;
-  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== RESET FOR NEW SUBMISSION =====
+function resetForNewSubmission() {
+  // Clear alert
+  var box = document.getElementById('alertBox');
+  box.className = 'alert';
+  box.innerHTML = '';
+
+  // Show form again
+  var form = document.getElementById('surveyForm');
+  form.style.display = '';
+
+  // Reset all checkboxes and hide detail panels
+  for (var i = 0; i < ACTIVITIES.length; i++) {
+    var act = ACTIVITIES[i];
+    var cb = document.getElementById('cb-' + act.id);
+    if (cb) cb.checked = false;
+    var details = document.getElementById('details-' + act.id);
+    if (details) details.style.display = 'none';
+    var dateInput = document.getElementById('date-' + act.id);
+    if (dateInput) dateInput.value = '';
+    var descInput = document.getElementById('desc-' + act.id);
+    if (descInput) descInput.value = '';
+    var fileInput = document.getElementById('file-' + act.id);
+    if (fileInput) fileInput.value = '';
+    if (act.variableHours) {
+      var hoursInput = document.getElementById('hours-' + act.id);
+      if (hoursInput) hoursInput.value = act.minHours;
+    }
+  }
+
+  // Reset total hours
+  updateTotalHours();
+
+  // Reset submit button
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.innerHTML = 'Submit Activity Report';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ===== SUBMIT =====
@@ -381,9 +422,15 @@ async function handleSubmit() {
     var result;
     try { result = JSON.parse(text); } catch(e) { result = {}; }
     if (result.status === 'success') {
-      showAlert('success', '<strong>✅ Submission received!</strong><br>' + result.rows + ' activity(ies) logged.<br>You may close this page.');
-      document.getElementById('surveyForm').style.opacity = '0.5';
-      document.getElementById('surveyForm').style.pointerEvents = 'none';
+      document.getElementById('surveyForm').style.display = 'none';
+      showAlert('success',
+        '<div style="text-align:center;padding:20px 0;">' +
+        '<div style="font-size:48px;margin-bottom:12px;">🎉</div>' +
+        '<h2 style="margin:0 0 8px;">Submission Successful!</h2>' +
+        '<p style="margin:0 0 20px;color:#374151;">' + result.rows + ' activity(ies) logged successfully.</p>' +
+        '<button onclick="resetForNewSubmission()" style="background:#10b981;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Submit Another Report</button>' +
+        '</div>'
+      );
     } else if (result.status === 'error') {
       throw new Error(result.message || 'Unknown error');
     } else {
