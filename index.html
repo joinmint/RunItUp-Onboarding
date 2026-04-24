@@ -207,13 +207,14 @@ async function handleSubmit(e) {
       activities: activitiesPayload,
     };
 
-    const res = await fetch(WEBHOOK_URL, {
+    // Use no-cors to avoid cross-origin browser block (GitHub Pages → Tasklet webhook)
+    await fetch(WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload),
     });
-
-    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+    // With no-cors we can't read the response, so we assume success
 
     state.submitted = true;
     state.submitting = false;
