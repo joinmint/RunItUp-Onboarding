@@ -287,7 +287,12 @@ function updateTally() {
 function fileToBase64(file) {
   return new Promise(function(resolve, reject) {
     var reader = new FileReader();
-    reader.onload = function() { resolve(reader.result); };
+    reader.onload = function() {
+      // Strip the "data:mime;base64," prefix — Apps Script needs raw base64 only
+      var result = reader.result;
+      var base64 = result.split(',')[1] || result;
+      resolve(base64);
+    };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
