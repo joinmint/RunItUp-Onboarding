@@ -373,17 +373,21 @@ async function handleSubmit() {
 
     var response = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      redirect: 'follow'
     });
 
-    var result = await response.json();
-    if (result.success) {
-      showAlert('success', '<strong>✅ Submission received!</strong><br>' + result.message + '<br>You may close this page.');
+    var text = await response.text();
+    var result;
+    try { result = JSON.parse(text); } catch(e) { result = {}; }
+    if (result.status === 'success') {
+      showAlert('success', '<strong>✅ Submission received!</strong><br>' + result.rows + ' activity(ies) logged.<br>You may close this page.');
       document.getElementById('surveyForm').style.opacity = '0.5';
       document.getElementById('surveyForm').style.pointerEvents = 'none';
+    } else if (result.status === 'error') {
+      throw new Error(result.message || 'Unknown error');
     } else {
-      throw new Error(result.error || 'Unknown error');
+      throw new Error('Unexpected response from server');
     }
   } catch (err) {
     showAlert('error', '<strong>Submission failed:</strong> ' + err.message + '<br>Please try again or contact your program coordinator.');
