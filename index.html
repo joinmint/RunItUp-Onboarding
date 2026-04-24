@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run It Up – Instructor Onboarding Activity Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #1a1a2e; min-height: 100vh; }
+
+    .header { background: #fff; border-bottom: 3px solid #e8e8e8; padding: 24px 0; text-align: center; }
+    .header img { height: 72px; margin-bottom: 10px; }
+    .header h1 { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; }
+    .header p { color: #666; margin-top: 4px; font-size: 0.95rem; }
+
+    .container { max-width: 780px; margin: 32px auto; padding: 0 16px 60px; }
+
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 28px; margin-bottom: 24px; }
+    .card h2 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+    .card .section-desc { font-size: 0.875rem; color: #666; margin-bottom: 18px; font-style: italic; }
+
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 5px; }
+    .field input[type="text"], .field input[type="email"] {
+      width: 100%; padding: 10px 13px; border: 1.5px solid #ddd; border-radius: 8px;
+      font-size: 0.95rem; transition: border-color 0.2s;
+    }
+    .field input:focus { outline: none; border-color: #ff6b35; }
+
+    .activity-row { border: 1.5px solid #eee; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; transition: border-color 0.2s; }
+    .activity-row.selected { border-color: #ff6b35; background: #fff8f5; }
+    .activity-header { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .activity-header input[type="checkbox"] { width: 18px; height: 18px; accent-color: #ff6b35; cursor: pointer; flex-shrink: 0; }
+    .activity-title { font-size: 0.95rem; font-weight: 600; flex: 1; }
+    .activity-badge { background: #ff6b35; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
+
+    .activity-details { margin-top: 14px; padding-top: 14px; border-top: 1px solid #f0e8e4; display: none; }
+    .activity-row.selected .activity-details { display: block; }
+    .activity-details label { display: block; font-size: 0.82rem; font-weight: 600; color: #555; margin-bottom: 4px; margin-top: 10px; }
+    .activity-details input[type="date"], .activity-details textarea, .activity-details input[type="number"] {
+      width: 100%; padding: 8px 11px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.9rem;
+    }
+    .activity-details textarea { resize: vertical; min-height: 72px; font-family: inherit; }
+    .activity-details input:focus, .activity-details textarea:focus { outline: none; border-color: #ff6b35; }
+
+    .file-upload { display: flex; align-items: center; gap: 10px; }
+    .file-upload input[type="file"] { flex: 1; font-size: 0.85rem; }
+    .file-name { font-size: 0.8rem; color: #888; margin-top: 4px; }
+
+    .tally-bar { position: sticky; bottom: 0; background: #1a1a2e; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
+    .tally-bar .label { font-size: 0.9rem; opacity: 0.8; }
+    .tally-bar .hours { font-size: 1.5rem; font-weight: 800; color: #ff6b35; }
+
+    .submit-btn { display: block; width: 100%; padding: 15px; background: #ff6b35; color: #fff; font-size: 1.05rem; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+    .submit-btn:hover { background: #e55a25; }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; }
+    .alert-error { background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; }
+    .alert-success { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+
+    .success-screen { text-align: center; padding: 60px 20px; }
+    .success-screen .check { font-size: 4rem; margin-bottom: 16px; }
+    .success-screen h2 { font-size: 1.5rem; font-weight: 800; color: #1a1a2e; margin-bottom: 8px; }
+    .success-screen p { color: #666; margin-bottom: 24px; }
+    .success-screen button { background: #ff6b35; color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 700; }
+
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .header h1 { font-size: 1.2rem; }
+      .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <img src="./logo.png" alt="Run It Up Logo" onerror="this.style.display='none'" />
+  <h1>Instructor Onboarding Activity Report</h1>
+  <p>Select the activities you have completed and provide the required details.</p>
+</div>
+
+<div class="container" id="app">
+  <!-- Rendered by JS -->
+</div>
+
+<script>
+const WEBHOOK_URL = 'https://webhooks.tasklet.ai/v1/public/webhook/a_z8xhf1a2nt0dxyp356fh?token=ddb72ac3177948278ca2159564dacafd';
+
+const ACTIVITIES = [
+  // Section A
+  { id: 'curriculum-budget', title: 'Curriculum and Budget Submission', hours: 1, section: 'A', variableHours: true, minHours: 1, maxHours: 20 },
+  // Section B
+  { id: 'corporate-card', title: 'Corporate Card Training', hours: 1, section: 'B' },
+  { id: 'cpr-training', title: 'CPR Training', hours: 1, section: 'B' },
+  { id: 'mandated-reporting-abuse', title: 'DC Mandated Reporting of Abuse Training', hours: 1, section: 'B' },
+  { id: 'gw-weekly-reporter', title: 'GW Weekly Reporter Training', hours: 1, section: 'B' },
+  { id: 'youth-covenant', title: 'Run It Up: Youth Covenant (Class Rules) Review', hours: 1, section: 'B' },
+  { id: 'disciplinary-action', title: 'Run It Up Disciplinary Action and Escalation Policy', hours: 1, section: 'B' },
+  { id: 'pedagogy-review', title: 'Curriculum Pedagogy Review', hours: 1.5, section: 'B' },
+  // Section C
+  { id: 'motivational-interviewing', title: 'Motivational Interviewing – CDC Overdose Prevention Training', hours: 1, section: 'C' },
+  { id: 'strengths-based', title: 'Strengths-Based Practice – Homeless Link Bitesize Learning (Session 1 & 2)', hours: 1, section: 'C' },
+  { id: 'conflict-resolution', title: 'Conflict Resolution & De-escalation – Trauma-Informed Approach (HHRC)', hours: 2, section: 'C' },
+  { id: 'sel-review', title: 'Social Emotional Learning Review – SEL Printout + ARCC Competencies', hours: 3, section: 'C' },
+  { id: 'mandated-reporting-dc', title: 'Mandated Reporting – DC Mandated Reporter Training', hours: 2, section: 'C' },
+  { id: 'cpr-certification', title: 'CPR Certification Exam', hours: 1, section: 'C' },
+];
+
+const SECTIONS = {
+  A: { label: 'A. Instructional Design', desc: '' },
+  B: { label: 'B. Mandatory Trainings', desc: 'These are trainings that, if you attended, were online with the group.' },
+  C: { label: 'C. Self Selection Activities', desc: '' },
+};
+
+// State
+let state = {
+  name: '',
+  email: '',
+  entries: {},
+  files: {},
+  submitted: false,
+  submitting: false,
+  error: '',
+};
+
+ACTIVITIES.forEach(a => {
+  state.entries[a.id] = {
+    completed: false,
+    dateCompleted: '',
+    description: '',
+    fileName: '',
+    hours: a.variableHours ? a.minHours : a.hours,
+  };
+});
+
+function getActivityHours(a) {
+  const entry = state.entries[a.id];
+  return a.variableHours ? (entry.hours || a.minHours) : a.hours;
+}
+
+function getTotalHours() {
+  return ACTIVITIES.reduce((sum, a) => {
+    const entry = state.entries[a.id];
+    return entry.completed ? sum + getActivityHours(a) : sum;
+  }, 0);
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  if (state.submitting) return;
+
+  // Validate
+  state.error = '';
+  if (!state.name.trim()) { state.error = 'Please enter your name.'; render(); return; }
+  if (!state.email.trim() || !state.email.includes('@')) { state.error = 'Please enter a valid email.'; render(); return; }
+  const selected = ACTIVITIES.filter(a => state.entries[a.id].completed);
+  if (selected.length === 0) { state.error = 'Please select at least one completed activity.'; render(); return; }
+  for (const a of selected) {
+    const e = state.entries[a.id];
+    if (!e.dateCompleted) { state.error = `Please provide a completion date for "${a.title}".`; render(); return; }
+    if (!e.description.trim()) { state.error = `Please provide a description for "${a.title}".`; render(); return; }
+  }
+
+  state.submitting = true;
+  render();
+
+  try {
+    // Encode files to base64
+    const activitiesPayload = [];
+    for (const a of selected) {
+      const entry = state.entries[a.id];
+      let fileData = '';
+      let fileName = entry.fileName || '';
+      const fileObj = state.files[a.id];
+      if (fileObj) {
+        fileData = await fileToBase64(fileObj);
+        fileName = fileObj.name;
+      }
+      activitiesPayload.push({
+        activityId: a.id,
+        title: a.title,
+        section: SECTIONS[a.section].label,
+        hours: getActivityHours(a),
+        dateCompleted: entry.dateCompleted,
+        description: entry.description,
+        fileName,
+        fileData,
+      });
+    }
+
+    const payload = {
+      instructorName: state.name.trim(),
+      instructorEmail: state.email.trim(),
+      submittedAt: new Date().toISOString(),
+      activities: activitiesPayload,
+    };
+
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+    state.submitted = true;
+    state.submitting = false;
+    render();
+  } catch (err) {
+    state.error = 'Submission failed. Please try again or contact your coordinator. (' + err.message + ')';
+    state.submitting = false;
+    render();
+  }
+}
+
+function render() {
+  const app = document.getElementById('app');
+
+  if (state.submitted) {
+    app.innerHTML = `
+      <div class="card success-screen">
+        <div class="check">✅</div>
+        <h2>Submission Received!</h2>
+        <p>Thank you, <strong>${escHtml(state.name)}</strong>! Your onboarding activity report has been submitted successfully. Your coordinator will be notified.</p>
+        <button onclick="resetForm()">Submit Another</button>
+      </div>
+    `;
+    return;
+  }
+
+  const totalHours = getTotalHours();
+  const totalHoursDisplay = Number.isInteger(totalHours) ? totalHours : totalHours.toFixed(1);
+
+  let html = '';
+
+  if (state.error) {
+    html += `<div class="alert alert-error">⚠️ ${escHtml(state.error)}</div>`;
+  }
+
+  // Instructor info
+  html += `
+    <div class="card">
+      <h2>Instructor Information</h2>
+      <div style="margin-top:14px">
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="field-name" value="${escAttr(state.name)}" placeholder="Your full name" oninput="state.name=this.value" />
+        </div>
+        <div class="field">
+          <label>Email Address *</label>
+          <input type="email" id="field-email" value="${escAttr(state.email)}" placeholder="your@email.com" oninput="state.email=this.value" />
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Sections
+  ['A', 'B', 'C'].forEach(sec => {
+    const secInfo = SECTIONS[sec];
+    const acts = ACTIVITIES.filter(a => a.section === sec);
+    html += `<div class="card">
+      <h2>${escHtml(secInfo.label)}</h2>
+      ${secInfo.desc ? `<p class="section-desc">${escHtml(secInfo.desc)}</p>` : ''}`;
+
+    acts.forEach(a => {
+      const entry = state.entries[a.id];
+      const hrs = getActivityHours(a);
+      const hrsLabel = a.variableHours ? `${entry.hours || a.minHours} hr${(entry.hours || a.minHours) !== 1 ? 's' : ''}` : `${a.hours} hr${a.hours !== 1 ? 's' : ''}`;
+      html += `
+        <div class="activity-row ${entry.completed ? 'selected' : ''}" id="row-${a.id}">
+          <div class="activity-header" onclick="toggleActivity('${a.id}')">
+            <input type="checkbox" ${entry.completed ? 'checked' : ''} onclick="event.stopPropagation();toggleActivity('${a.id}')" />
+            <span class="activity-title">${escHtml(a.title)}</span>
+            <span class="activity-badge">${hrsLabel}</span>
+          </div>
+          <div class="activity-details">
+            ${a.variableHours ? `
+              <label>Hours Completed (${a.minHours}–${a.maxHours}) *</label>
+              <input type="number" min="${a.minHours}" max="${a.maxHours}" value="${entry.hours || a.minHours}"
+                oninput="state.entries['${a.id}'].hours=Math.min(${a.maxHours},Math.max(${a.minHours},parseInt(this.value)||${a.minHours}));rerenderBadge('${a.id}')" />
+            ` : ''}
+            <label>Date Completed *</label>
+            <input type="date" value="${escAttr(entry.dateCompleted)}" max="${new Date().toISOString().split('T')[0]}"
+              oninput="state.entries['${a.id}'].dateCompleted=this.value" />
+            <label>Description of Completed Activity *</label>
+            <textarea placeholder="Describe what you did..."
+              oninput="state.entries['${a.id}'].description=this.value">${escHtml(entry.description)}</textarea>
+            <label>Proof of Completion (optional)</label>
+            <div class="file-upload">
+              <input type="file" accept="image/*,.pdf,.doc,.docx" onchange="handleFile('${a.id}',this)" />
+            </div>
+            ${entry.fileName ? `<div class="file-name">📎 ${escHtml(entry.fileName)}</div>` : ''}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  });
+
+  // Submit
+  html += `
+    <button class="submit-btn" onclick="handleSubmit(event)" ${state.submitting ? 'disabled' : ''}>
+      ${state.submitting ? '<span class="spinner"></span>Submitting...' : `Submit Report (${totalHoursDisplay} hrs total)`}
+    </button>
+  `;
+
+  app.innerHTML = html;
+
+  // Sticky tally bar (append to body)
+  let tally = document.getElementById('tally-bar');
+  if (!tally) {
+    tally = document.createElement('div');
+    tally.id = 'tally-bar';
+    tally.className = 'tally-bar';
+    document.body.appendChild(tally);
+  }
+  tally.innerHTML = `
+    <span class="label">Total Hours Completed</span>
+    <span class="hours">${totalHoursDisplay} hrs</span>
+  `;
+}
+
+function toggleActivity(id) {
+  state.entries[id].completed = !state.entries[id].completed;
+  render();
+}
+
+function rerenderBadge(id) {
+  const a = ACTIVITIES.find(x => x.id === id);
+  if (!a) return;
+  const hrs = state.entries[id].hours || a.minHours;
+  const badge = document.querySelector(`#row-${id} .activity-badge`);
+  if (badge) badge.textContent = `${hrs} hr${hrs !== 1 ? 's' : ''}`;
+  const tallyEl = document.getElementById('tally-bar');
+  if (tallyEl) {
+    const total = getTotalHours();
+    const display = Number.isInteger(total) ? total : total.toFixed(1);
+    tallyEl.querySelector('.hours').textContent = `${display} hrs`;
+  }
+  const btn = document.querySelector('.submit-btn');
+  if (btn) {
+    const total = getTotalHours();
+    const display = Number.isInteger(total) ? total : total.toFixed(1);
+    btn.textContent = `Submit Report (${display} hrs total)`;
+  }
+}
+
+function handleFile(id, input) {
+  if (input.files[0]) {
+    state.files[id] = input.files[0];
+    state.entries[id].fileName = input.files[0].name;
+    // Update file name display without full re-render
+    const existing = input.parentElement.nextElementSibling;
+    if (existing && existing.classList.contains('file-name')) {
+      existing.textContent = '📎 ' + input.files[0].name;
+    } else {
+      const div = document.createElement('div');
+      div.className = 'file-name';
+      div.textContent = '📎 ' + input.files[0].name;
+      input.parentElement.insertAdjacentElement('afterend', div);
+    }
+  }
+}
+
+function resetForm() {
+  state = { name: '', email: '', entries: {}, files: {}, submitted: false, submitting: false, error: '' };
+  ACTIVITIES.forEach(a => {
+    state.entries[a.id] = { completed: false, dateCompleted: '', description: '', fileName: '', hours: a.variableHours ? a.minHours : a.hours };
+  });
+  render();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(str) {
+  return String(str).replace(/"/g,'&quot;');
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
