@@ -223,6 +223,8 @@ function renderActivities() {
       '</div>' +
       '<div class="activity-details">' +
         (act.variableHours ?
+          '<p style="margin:0 0 12px 0;padding:10px 14px;background:#fff7ed;border-left:3px solid #f59e0b;border-radius:4px;font-size:0.9rem;color:#92400e;"><strong>Note:</strong> We recommend waiting until the entire curriculum and budget is completed before submitting your hours for this.</p>' : '') +
+        (act.variableHours ?
           '<div class="detail-row">' +
             '<label>Hours Spent (1–20) *</label>' +
             '<div class="hours-select">' +
