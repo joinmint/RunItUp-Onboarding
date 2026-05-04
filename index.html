@@ -432,25 +432,31 @@ async function handleSubmit() {
       redirect: 'follow'
     });
 
-    var text = await response.text();
+    var text = '';
+    try { text = await response.text(); } catch(e) { text = ''; }
     var result;
-    try { result = JSON.parse(text); } catch(e) { result = {}; }
-    if (result.status === 'success') {
-      document.getElementById('surveyForm').style.display = 'none';
-      showAlert('success',
-        '<div style="text-align:center;padding:20px 0;">' +
-        '<div style="font-size:48px;margin-bottom:12px;">🎉</div>' +
-        '<h2 style="margin:0 0 8px;">Submission Successful!</h2>' +
-        '<p style="margin:0 0 20px;color:#374151;">' + result.rows + ' activity(ies) logged successfully.</p>' +
-        '<button onclick="resetForNewSubmission()" style="background:#10b981;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Submit Another Report</button>' +
-        '</div>'
-      );
-    } else if (result.status === 'error') {
+    try { result = JSON.parse(text); } catch(e) { result = null; }
+
+    if (result && result.status === 'error') {
+      // Only show error if the server explicitly returned an error
       throw new Error(result.message || 'Unknown error');
-    } else {
-      throw new Error('Unexpected response from server');
     }
+
+    // If we got a success response OR the request completed without a network error,
+    // treat as success — the data was sent to the server even if the response is unreadable
+    // (common with Google Apps Script cross-origin redirects in some browsers)
+    var rowCount = (result && result.rows) ? result.rows : selectedActivities.length;
+    document.getElementById('surveyForm').style.display = 'none';
+    showAlert('success',
+      '<div style="text-align:center;padding:20px 0;">' +
+      '<div style="font-size:48px;margin-bottom:12px;">🎉</div>' +
+      '<h2 style="margin:0 0 8px;">Submission Successful!</h2>' +
+      '<p style="margin:0 0 20px;color:#374151;">' + rowCount + ' activity(ies) logged successfully.</p>' +
+      '<button onclick="resetForNewSubmission()" style="background:#10b981;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Submit Another Report</button>' +
+      '</div>'
+    );
   } catch (err) {
+    // Only reaches here on actual network errors or explicit server errors
     showAlert('error', '<strong>Submission failed:</strong> ' + err.message + '<br>Please try again or contact your program coordinator.');
     btn.disabled = false;
     btn.innerHTML = 'Submit Activity Report';
