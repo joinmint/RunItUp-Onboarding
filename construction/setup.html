@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Construction Intake – Apps Script Setup</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 2rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: #f97316; }
+    h2 { font-size: 1.3rem; margin: 2rem 0 1rem; color: #fb923c; }
+    p, li { line-height: 1.7; color: #cbd5e1; }
+    ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    li { margin-bottom: 0.75rem; }
+    a { color: #38bdf8; }
+    .badge { display: inline-block; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 2px 8px; font-family: monospace; font-size: 0.85rem; color: #f97316; }
+    .code-wrap { position: relative; margin: 1.5rem 0; border: 1px solid #334155; border-radius: 12px; overflow: hidden; background: #1e293b; }
+    .code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: #1a2332; border-bottom: 1px solid #334155; }
+    .code-header span { font-size: 0.85rem; color: #94a3b8; font-family: monospace; }
+    .copy-btn { display: flex; align-items: center; gap: 6px; background: #f97316; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .copy-btn:hover { background: #ea580c; transform: translateY(-1px); }
+    .copy-btn.copied { background: #22c55e; }
+    .copy-btn svg { width: 16px; height: 16px; }
+    pre { padding: 1.25rem; overflow-x: auto; max-height: 500px; overflow-y: auto; }
+    code { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.82rem; line-height: 1.6; color: #e2e8f0; white-space: pre; }
+    .steps-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem 2rem; margin: 1.5rem 0; }
+    .warning { background: #451a03; border: 1px solid #92400e; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.9rem; }
+    .warning strong { color: #fbbf24; }
+    .success { background: #052e16; border: 1px solid #166534; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .success strong { color: #4ade80; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #f97316; color: #fff; border-radius: 50%; font-weight: 700; font-size: 0.85rem; margin-right: 8px; flex-shrink: 0; }
+    @media (max-width: 600px) { body { padding: 1rem; } pre { font-size: 0.75rem; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏗️ Construction Intake – Apps Script Setup</h1>
+    <p>Follow these steps to deploy the backend that powers the <a href="https://joinmint.github.io/RunItUp-Onboarding/construction/">Construction Career Pre-Apprenticeship Intake Form</a>.</p>
+
+    <h2>📋 Setup Steps</h2>
+    <div class="steps-card">
+      <ol>
+        <li><span class="step-num">1</span> Go to <a href="https://script.google.com/home" target="_blank">Google Apps Script</a> and click <strong>+ New Project</strong></li>
+        <li><span class="step-num">2</span> Delete everything in the default <span class="badge">Code.gs</span> file</li>
+        <li><span class="step-num">3</span> Click the <strong>"Copy All Code"</strong> button below — it copies the entire script to your clipboard</li>
+        <li><span class="step-num">4</span> Paste into the Apps Script editor (<strong>Ctrl+V</strong> / <strong>⌘+V</strong>)</li>
+        <li><span class="step-num">5</span> Click <strong>Deploy → New deployment</strong></li>
+        <li><span class="step-num">6</span> Select type: <strong>Web app</strong></li>
+        <li><span class="step-num">7</span> Set <strong>Execute as:</strong> <span class="badge">Me</span></li>
+        <li><span class="step-num">8</span> Set <strong>Who has access:</strong> <span class="badge">Anyone</span></li>
+        <li><span class="step-num">9</span> Click <strong>Deploy</strong> and authorize when prompted</li>
+        <li><span class="step-num">10</span> Copy the <strong>Web App URL</strong> and send it back — it will be embedded in the intake form</li>
+      </ol>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ Important:</strong> When Google asks for permissions, click "Advanced" → "Go to (project name)" → "Allow". The script needs access to Sheets and Drive to save submissions and uploaded files.
+    </div>
+
+    <h2>📄 Code.gs — Full Script</h2>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span>Code.gs</span>
+        <button class="copy-btn" onclick="copyCode()">
+          <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copy-text">Copy All Code</span>
+        </button>
+      </div>
+      <pre><code id="gs-code"></code></pre>
+    </div>
+
+    <div class="success">
+      <strong>✅ After deploying:</strong> Send the Web App URL back and it'll be wired into the live intake form. Each submission will automatically log to the <a href="https://docs.google.com/spreadsheets/d/1yiems8RcnvMzpacbCKxCtnYp82V8c1MCXfRDlM0Pv_Y/edit" target="_blank" style="color:#4ade80;">Google Sheet</a> and upload documents to Google Drive.
+    </div>
+  </div>
+
+  <script>
+// The full Code.gs content
+const GS_CODE = `/**
+ * Construction Career Pre-Apprenticeship – Applicant Intake
+ * Google Apps Script Backend
+ *
+ * Spreadsheet: 1yiems8RcnvMzpacbCKxCtnYp82V8c1MCXfRDlM0Pv_Y
+ * Drive Folder: create a folder or use existing for uploads
+ */
+
+const SPREADSHEET_ID = '1yiems8RcnvMzpacbCKxCtnYp82V8c1MCXfRDlM0Pv_Y';
+const SHEET_NAME = 'Submissions';
+
+// --- Drive folder (created on first run) ---
+function getOrCreateFolder() {
+  const folderName = 'Construction Pre-Apprenticeship – Applicant Uploads';
+  const folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) return folders.next();
+  return DriveApp.createFolder(folderName);
+}
+
+// --- CORS preflight ---
+function doOptions(e) {
+  return ContentService.createTextOutput('')
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// --- Main POST handler ---
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
+
+    const submittedAt = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+    const folder = getOrCreateFolder();
+
+    // Upload files and get links
+    const resumeLink = uploadFile(data.resumeFile, data.resumeFileName, data.lastName, 'Resume', folder);
+    const certLink = uploadFile(data.certFile, data.certFileName, data.lastName, 'Certification', folder);
+    const otherLink = uploadFile(data.otherFile, data.otherFileName, data.lastName, 'Other', folder);
+
+    // Upload signatures
+    const sigLink = uploadSignature(data.applicantSignature, data.lastName, 'Applicant_Signature', folder);
+    const guardianSigLink = uploadSignature(data.guardianSignature, data.lastName, 'Guardian_Signature', folder);
+
+    // Build row matching spreadsheet columns
+    const row = [
+      submittedAt,
+      data.firstName || '',
+      data.lastName || '',
+      data.dob || '',
+      data.age || '',
+      data.phone || '',
+      data.email || '',
+      data.address || '',
+      data.cityStateZip || '',
+      data.preferredContact || '',
+      // Parent/Guardian
+      data.guardianName || '',
+      data.guardianPhone || '',
+      data.guardianEmail || '',
+      data.guardianRelationship || '',
+      // Eligibility
+      data.enrolledInSchool || '',
+      data.currentSchool || '',
+      data.highestGrade || '',
+      data.currentlyWorking || '',
+      data.otherProgram || '',
+      data.otherProgramName || '',
+      data.reliableTransportation || '',
+      data.scheduleLimitations || '',
+      // Emergency Contact
+      data.emergencyName || '',
+      data.emergencyPhone || '',
+      data.emergencyRelationship || '',
+      // Program Interest
+      data.whyInterested || '',
+      data.experienceLevel || '',
+      data.experienceDescription || '',
+      Array.isArray(data.programAreas) ? data.programAreas.join(', ') : (data.programAreas || ''),
+      // File links
+      resumeLink,
+      certLink,
+      otherLink,
+      // Consent
+      data.infoAccurate || '',
+      data.understandsNoGuarantee || '',
+      sigLink,
+      data.dateSubmitted || submittedAt,
+      guardianSigLink,
+      // Metadata
+      data.isUnder18 ? 'Yes' : 'No'
+    ];
+
+    sheet.appendRow(row);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// --- Upload a file from base64 ---
+function uploadFile(base64Data, fileName, lastName, label, folder) {
+  if (!base64Data || !fileName) return '';
+  try {
+    const decoded = Utilities.base64Decode(base64Data);
+    const blob = Utilities.newBlob(decoded, getMimeType(fileName), fileName);
+    const safeName = (lastName || 'Applicant') + '_' + label + '_' + fileName;
+    blob.setName(safeName);
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return file.getUrl();
+  } catch (e) {
+    return 'Upload error: ' + e.toString();
+  }
+}
+
+// --- Upload signature from data URL ---
+function uploadSignature(dataUrl, lastName, label, folder) {
+  if (!dataUrl) return '';
+  try {
+    const base64 = dataUrl.replace(/^data:image\\/\\w+;base64,/, '');
+    const decoded = Utilities.base64Decode(base64);
+    const blob = Utilities.newBlob(decoded, 'image/png', (lastName || 'Applicant') + '_' + label + '.png');
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return file.getUrl();
+  } catch (e) {
+    return 'Sig upload error: ' + e.toString();
+  }
+}
+
+// --- Guess MIME type from file extension ---
+function getMimeType(fileName) {
+  const ext = (fileName.split('.').pop() || '').toLowerCase();
+  const types = {
+    'pdf': 'application/pdf',
+    'doc': 'application/msword',
+    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'xls': 'application/vnd.ms-excel',
+    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'csv': 'text/csv',
+    'png': 'image/png',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'gif': 'image/gif',
+    'webp': 'image/webp',
+    'heic': 'image/heic'
+  };
+  return types[ext] || 'application/octet-stream';
+}`;
+
+document.getElementById('gs-code').textContent = GS_CODE;
+
+function copyCode() {
+  navigator.clipboard.writeText(GS_CODE).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const txt = document.getElementById('copy-text');
+    btn.classList.add('copied');
+    txt.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      txt.textContent = 'Copy All Code';
+    }, 2500);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = GS_CODE;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('copy-text').textContent = '✓ Copied!';
+    setTimeout(() => { document.getElementById('copy-text').textContent = 'Copy All Code'; }, 2500);
+  });
+}
+  </script>
+</body>
+</html>
