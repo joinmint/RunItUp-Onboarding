@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Construction Career Pre-Apprenticeship – Applicant Intake</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #e8edf2; color: #1a2744; line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+    .header {
+      text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #1a2744 0%, #2c4a6e 100%);
+      border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(26,39,68,0.3);
+      color: #fff; position: relative; overflow: hidden;
+    }
+    .header::before {
+      content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200"><rect fill="none"/><g opacity="0.05"><rect x="600" y="20" width="8" height="120" fill="white"/><rect x="596" y="20" width="16" height="4" fill="white"/><rect x="620" y="40" width="8" height="100" fill="white"/><rect x="580" y="60" width="60" height="4" fill="white"/><rect x="640" y="30" width="40" height="4" fill="white" transform="rotate(-30 660 32)"/></g></svg>') no-repeat right center;
+      background-size: 300px;
+    }
+    .header img { max-width: 160px; margin-bottom: 12px; position: relative; }
+    .header h1 { font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; position: relative; }
+    .header .subtitle { font-size: 14px; color: #b0c4de; margin-top: 4px; position: relative; }
+    .header .badge {
+      display: inline-block; background: #f57c00; color: #fff; padding: 4px 16px;
+      border-radius: 20px; font-size: 12px; font-weight: 700; margin-top: 10px; position: relative;
+    }
+
+    .card {
+      background: #fff; border-radius: 12px; padding: 24px;
+      margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 4px solid #1a2744;
+    }
+    .card h2 {
+      font-size: 18px; margin-bottom: 4px; color: #1a2744;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card h2 .icon { font-size: 20px; }
+    .card .section-desc { color: #666; font-size: 13px; margin-bottom: 16px; font-style: italic; }
+
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+    .field label .required { color: #dc2626; margin-left: 2px; }
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="tel"],
+    .field input[type="number"],
+    .field input[type="date"],
+    .field select,
+    .field textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px; font-family: inherit; transition: border-color 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: #1a2744; box-shadow: 0 0 0 3px rgba(26,39,68,0.1);
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field .hint { font-size: 12px; color: #888; margin-top: 4px; }
+
+    .field-row { display: flex; gap: 16px; }
+    .field-row .field { flex: 1; }
+    @media (max-width: 600px) { .field-row { flex-direction: column; gap: 0; } }
+
+    .radio-group, .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .radio-option, .checkbox-option {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border: 1px solid #ddd; border-radius: 8px; cursor: pointer;
+      transition: all 0.2s; font-size: 14px; user-select: none;
+    }
+    .radio-option:hover, .checkbox-option:hover { border-color: #1a2744; background: #f8fafc; }
+    .radio-option.selected { border-color: #1a2744; background: #eef2f7; font-weight: 600; }
+    .checkbox-option.selected { border-color: #2e7d32; background: #f0faf0; font-weight: 600; }
+    .radio-option input, .checkbox-option input { accent-color: #1a2744; }
+
+    /* Collapsible Parent/Guardian Section */
+    .collapsible-section {
+      max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .collapsible-section.expanded {
+      max-height: 600px; opacity: 1;
+    }
+    .guardian-toggle {
+      display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px;
+      margin-bottom: 16px; font-size: 14px; cursor: pointer;
+    }
+    .guardian-toggle .toggle-icon { font-size: 18px; transition: transform 0.3s; }
+    .guardian-toggle.open .toggle-icon { transform: rotate(90deg); }
+
+    /* Signature Field */
+    .signature-pad-wrapper { position: relative; }
+    .signature-pad {
+      width: 100%; height: 120px; border: 2px dashed #ccc; border-radius: 8px;
+      cursor: crosshair; touch-action: none; background: #fafafa;
+    }
+    .signature-pad.signed { border-color: #2e7d32; border-style: solid; }
+    .sig-clear {
+      position: absolute; top: 8px; right: 8px; background: #ef4444; color: #fff;
+      border: none; border-radius: 6px; padding: 4px 10px; font-size: 11px;
+      cursor: pointer; display: none;
+    }
+    .sig-clear.visible { display: block; }
+    .sig-label { font-size: 12px; color: #888; text-align: center; margin-top: 4px; }
+
+    /* Program Areas Grid */
+    .program-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin-top: 4px; }
+    .program-chip {
+      display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+      border: 1px solid #ddd; border-radius: 8px; cursor: pointer;
+      transition: all 0.2s; font-size: 13px; user-select: none;
+    }
+    .program-chip:hover { border-color: #2e7d32; background: #f0faf0; }
+    .program-chip.selected { border-color: #2e7d32; background: #e8f5e9; font-weight: 600; }
+    .program-chip input { accent-color: #2e7d32; }
+    .program-chip .chip-icon { font-size: 16px; }
+
+    /* File Upload */
+    .file-upload-area {
+      border: 2px dashed #ddd; border-radius: 8px; padding: 16px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .file-upload-area:hover { border-color: #1a2744; background: #f8fafc; }
+    .file-upload-area .upload-icon { font-size: 24px; margin-bottom: 4px; }
+    .file-upload-area .upload-text { font-size: 13px; color: #666; }
+    .file-upload-area input[type="file"] { display: none; }
+    .file-name { font-size: 12px; color: #2e7d32; margin-top: 6px; font-weight: 600; }
+
+    .submit-btn {
+      width: 100%; padding: 16px; background: linear-gradient(135deg, #1a2744, #2c4a6e);
+      color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,39,68,0.4); }
+    .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .alert {
+      padding: 14px 18px; border-radius: 8px; margin-bottom: 16px;
+      font-size: 14px; display: none;
+    }
+    .alert.error { display: block; background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .alert.info { display: block; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+
+    /* Success Screen */
+    .success-screen {
+      display: none; text-align: center; padding: 60px 20px;
+      background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .success-screen .check-circle {
+      width: 80px; height: 80px; border-radius: 50%; background: #e8f5e9;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 40px;
+    }
+    .success-screen h2 { font-size: 24px; color: #2e7d32; margin-bottom: 8px; }
+    .success-screen p { color: #666; margin-bottom: 24px; }
+    .reset-btn {
+      padding: 14px 32px; background: #1a2744; color: #fff;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .reset-btn:hover { background: #2c4a6e; }
+
+    /* Loading overlay */
+    .loading-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(26,39,68,0.6); z-index: 1000;
+      justify-content: center; align-items: center;
+    }
+    .loading-overlay.active { display: flex; }
+    .loading-box {
+      background: #fff; padding: 40px; border-radius: 12px; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid #e5e7eb;
+      border-top-color: #1a2744; border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div style="font-weight:600;color:#1a2744;">Submitting your application...</div>
+    <div style="font-size:13px;color:#888;margin-top:4px;">Please wait while we process your information.</div>
+  </div>
+</div>
+
+<div class="container" id="formContainer">
+  <div class="header">
+    <img src="logo.png" alt="Mint Project" onerror="this.style.display='none'">
+    <h1>Construction Career<br>Pre-Apprenticeship Program</h1>
+    <div class="subtitle">Mint Project Building Blocks for Fully Equipped Future Workers</div>
+    <div class="badge">🏗️ AGES 11–16 AND 17–24+</div>
+  </div>
+
+  <div id="alertBox"></div>
+
+  <form id="intakeForm" onsubmit="return false;">
+
+    <!-- BASIC APPLICANT INFORMATION -->
+    <div class="card">
+      <h2><span class="icon">👤</span> Basic Applicant Information</h2>
+      <div class="section-desc"></div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>First Name <span class="required">*</span></label>
+          <input type="text" id="firstName" required>
+        </div>
+        <div class="field">
+          <label>Last Name <span class="required">*</span></label>
+          <input type="text" id="lastName" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Date of Birth <span class="required">*</span></label>
+          <input type="date" id="dob" required>
+        </div>
+        <div class="field">
+          <label>Age <span class="required">*</span></label>
+          <input type="number" id="age" min="8" max="99" required readonly style="background:#f3f4f6;">
+          <div class="hint">Auto-calculated from date of birth</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Phone Number <span class="required">*</span></label>
+          <input type="tel" id="phone" placeholder="(202) 555-1234" required>
+        </div>
+        <div class="field">
+          <label>Email Address <span class="required">*</span></label>
+          <input type="email" id="email" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Home Address <span class="required">*</span></label>
+        <input type="text" id="address" placeholder="Street address" required>
+      </div>
+
+      <div class="field">
+        <label>City, State, ZIP Code <span class="required">*</span></label>
+        <input type="text" id="cityStateZip" placeholder="Washington, DC 20001" required>
+      </div>
+
+      <div class="field">
+        <label>Preferred Method of Contact <span class="required">*</span></label>
+        <div class="radio-group" data-field="preferredContact">
+          <label class="radio-option"><input type="radio" name="preferredContact" value="Text"> Text</label>
+          <label class="radio-option"><input type="radio" name="preferredContact" value="Phone Call"> Phone Call</label>
+          <label class="radio-option"><input type="radio" name="preferredContact" value="Email"> Email</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARENT/GUARDIAN SECTION -->
+    <div class="card" id="guardianCard">
+      <h2><span class="icon">👪</span> Parent or Guardian Information</h2>
+      <div class="section-desc">For applicants under 18.</div>
+
+      <div class="guardian-toggle" id="guardianToggle" onclick="toggleGuardianSection()">
+        <span class="toggle-icon">▶</span>
+        <span id="guardianToggleText">I am <strong>under 18</strong> — click to expand</span>
+      </div>
+
+      <div class="collapsible-section" id="guardianFields">
+        <div class="field">
+          <label>Parent/Guardian Full Name <span class="required">*</span></label>
+          <input type="text" id="guardianName" data-conditional="guardian">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Parent/Guardian Phone Number <span class="required">*</span></label>
+            <input type="tel" id="guardianPhone" data-conditional="guardian">
+          </div>
+          <div class="field">
+            <label>Parent/Guardian Email Address</label>
+            <input type="email" id="guardianEmail">
+          </div>
+        </div>
+        <div class="field">
+          <label>Relationship to Applicant <span class="required">*</span></label>
+          <input type="text" id="guardianRelationship" placeholder="e.g., Mother, Father, Legal Guardian" data-conditional="guardian">
+        </div>
+      </div>
+    </div>
+
+    <!-- ELIGIBILITY AND ENROLLMENT -->
+    <div class="card">
+      <h2><span class="icon">📋</span> Eligibility and Enrollment Information</h2>
+      <div class="section-desc"></div>
+
+      <div class="field">
+        <label>Are you currently enrolled in school? <span class="required">*</span></label>
+        <div class="radio-group" data-field="enrolledInSchool">
+          <label class="radio-option"><input type="radio" name="enrolledInSchool" value="Yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="enrolledInSchool" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Current school or most recent school attended <span class="required">*</span></label>
+        <input type="text" id="school" required>
+      </div>
+
+      <div class="field">
+        <label>Highest grade completed <span class="required">*</span></label>
+        <select id="highestGrade" required>
+          <option value="">Select grade...</option>
+          <option>5th Grade</option><option>6th Grade</option><option>7th Grade</option>
+          <option>8th Grade</option><option>9th Grade</option><option>10th Grade</option>
+          <option>11th Grade</option><option>12th Grade / GED</option>
+          <option>Some College</option><option>Associate's Degree</option>
+          <option>Bachelor's Degree or higher</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Are you currently working? <span class="required">*</span></label>
+        <div class="radio-group" data-field="currentlyWorking">
+          <label class="radio-option"><input type="radio" name="currentlyWorking" value="Yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="currentlyWorking" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Are you currently participating in another job training, apprenticeship, or youth program? <span class="required">*</span></label>
+        <div class="radio-group" data-field="inAnotherProgram">
+          <label class="radio-option"><input type="radio" name="inAnotherProgram" value="Yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="inAnotherProgram" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="field" id="otherProgramField" style="display:none;">
+        <label>If yes, please list the program:</label>
+        <input type="text" id="otherProgramName">
+      </div>
+
+      <div class="field">
+        <label>Do you have reliable transportation to attend program activities? <span class="required">*</span></label>
+        <div class="radio-group" data-field="transportation">
+          <label class="radio-option"><input type="radio" name="transportation" value="Yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="transportation" value="No"> No</label>
+          <label class="radio-option"><input type="radio" name="transportation" value="Sometimes"> Sometimes</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Do you have any schedule limitations we should know about?</label>
+        <textarea id="scheduleLimitations" placeholder="Example: school, work, family responsibilities, appointments."></textarea>
+      </div>
+    </div>
+
+    <!-- EMERGENCY CONTACT -->
+    <div class="card">
+      <h2><span class="icon">🚨</span> Emergency Contact</h2>
+      <div class="section-desc"></div>
+
+      <div class="field">
+        <label>Emergency Contact Name <span class="required">*</span></label>
+        <input type="text" id="emergencyName" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Emergency Contact Phone Number <span class="required">*</span></label>
+          <input type="tel" id="emergencyPhone" required>
+        </div>
+        <div class="field">
+          <label>Relationship to Applicant <span class="required">*</span></label>
+          <input type="text" id="emergencyRelationship" placeholder="e.g., Mother, Uncle, Coach" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRAM INTEREST AND EXPERIENCE -->
+    <div class="card">
+      <h2><span class="icon">🔨</span> Program Interest and Experience</h2>
+      <div class="section-desc"></div>
+
+      <div class="field">
+        <label>Why are you interested in joining the Construction Career Pre-Apprenticeship Program? <span class="required">*</span></label>
+        <textarea id="whyInterested" required placeholder="Tell us what draws you to this program..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Do you have any previous experience with construction, maintenance, landscaping, painting, custodial work, repairs, or similar hands-on work? <span class="required">*</span></label>
+        <div class="radio-group" data-field="experienceLevel">
+          <label class="radio-option"><input type="radio" name="experienceLevel" value="No experience"> No experience</label>
+          <label class="radio-option"><input type="radio" name="experienceLevel" value="Some experience"> Some experience</label>
+          <label class="radio-option"><input type="radio" name="experienceLevel" value="A lot of experience"> A lot of experience</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Briefly describe any previous experience, if any.</label>
+        <textarea id="experienceDescription" placeholder="Examples: school project, family work, job, volunteer work, home repair, landscaping, painting, cleaning, tools, or certifications."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Which program areas are you most interested in? <span class="required">*</span></label>
+        <div class="hint" style="margin-bottom:8px;">Select all that apply</div>
+        <div class="program-grid" id="programAreas">
+          <label class="program-chip"><input type="checkbox" value="Drywall"> <span class="chip-icon">🧱</span> Drywall</label>
+          <label class="program-chip"><input type="checkbox" value="Flooring"> <span class="chip-icon">🔲</span> Flooring</label>
+          <label class="program-chip"><input type="checkbox" value="Landscaping"> <span class="chip-icon">🌿</span> Landscaping</label>
+          <label class="program-chip"><input type="checkbox" value="Painting"> <span class="chip-icon">🎨</span> Painting</label>
+          <label class="program-chip"><input type="checkbox" value="Custodial Services"> <span class="chip-icon">🧹</span> Custodial Services</label>
+          <label class="program-chip"><input type="checkbox" value="Construction Fundamentals"> <span class="chip-icon">🏗️</span> Construction Fundamentals</label>
+          <label class="program-chip"><input type="checkbox" value="Maintenance"> <span class="chip-icon">🔧</span> Maintenance</label>
+          <label class="program-chip"><input type="checkbox" value="HVAC"> <span class="chip-icon">❄️</span> HVAC</label>
+          <label class="program-chip"><input type="checkbox" value="Not sure yet"> <span class="chip-icon">🤔</span> Not sure yet</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTIONAL DOCUMENT UPLOADS -->
+    <div class="card">
+      <h2><span class="icon">📎</span> Optional Document Uploads</h2>
+      <div class="section-desc">Upload any relevant documents. Accepted formats: PDF, Word, images, Excel.</div>
+
+      <div class="field">
+        <label>Resume (optional)</label>
+        <div class="file-upload-area" onclick="this.querySelector('input').click()">
+          <div class="upload-icon">📄</div>
+          <div class="upload-text">Click to upload your resume</div>
+          <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx,.csv" onchange="showFileName(this, 'resumeFileName')">
+        </div>
+        <div class="file-name" id="resumeFileName"></div>
+      </div>
+
+      <div class="field">
+        <label>Certifications or Training Documents (optional)</label>
+        <div class="hint" style="margin-bottom:6px;">Examples: OSHA, CPR/AED, flagger certification, maintenance certificate, school/work certificates.</div>
+        <div class="file-upload-area" onclick="this.querySelector('input').click()">
+          <div class="upload-icon">🏅</div>
+          <div class="upload-text">Click to upload certifications</div>
+          <input type="file" id="certsFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx,.csv" onchange="showFileName(this, 'certsFileName')">
+        </div>
+        <div class="file-name" id="certsFileName"></div>
+      </div>
+
+      <div class="field">
+        <label>Other Documents (optional)</label>
+        <div class="file-upload-area" onclick="this.querySelector('input').click()">
+          <div class="upload-icon">📁</div>
+          <div class="upload-text">Click to upload any other documents</div>
+          <input type="file" id="otherFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx,.csv" onchange="showFileName(this, 'otherFileName')">
+        </div>
+        <div class="file-name" id="otherFileName"></div>
+      </div>
+    </div>
+
+    <!-- CONSENT AND CONFIRMATION -->
+    <div class="card">
+      <h2><span class="icon">✅</span> Consent and Confirmation</h2>
+      <div class="section-desc"></div>
+
+      <div class="field">
+        <label>I confirm that the information I provided is accurate to the best of my knowledge. <span class="required">*</span></label>
+        <div class="radio-group" data-field="infoAccurate">
+          <label class="radio-option"><input type="radio" name="infoAccurate" value="Yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="infoAccurate" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>I understand that submitting this application does not guarantee acceptance into the program. <span class="required">*</span></label>
+        <div class="radio-group" data-field="understandsNoGuarantee">
+          <label class="radio-option"><input type="radio" name="understandsNoGuarantee" value="Yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="understandsNoGuarantee" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Applicant Signature <span class="required">*</span></label>
+        <div class="signature-pad-wrapper">
+          <canvas class="signature-pad" id="applicantSig"></canvas>
+          <button type="button" class="sig-clear" id="applicantSigClear" onclick="clearSignature('applicant')">Clear</button>
+        </div>
+        <div class="sig-label">Sign above using your mouse or finger</div>
+      </div>
+
+      <div class="field">
+        <label>Date Submitted</label>
+        <input type="date" id="dateSubmitted" required>
+      </div>
+
+      <div class="field" id="guardianSigField" style="display:none;">
+        <label>Parent/Guardian Signature <span class="required">*</span></label>
+        <div class="hint" style="margin-bottom:6px;">Required for applicants under 18.</div>
+        <div class="signature-pad-wrapper">
+          <canvas class="signature-pad" id="guardianSig"></canvas>
+          <button type="button" class="sig-clear" id="guardianSigClear" onclick="clearSignature('guardian')">Clear</button>
+        </div>
+        <div class="sig-label">Parent or guardian — sign above</div>
+      </div>
+    </div>
+
+    <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+      🏗️ Submit Application
+    </button>
+  </form>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="container">
+  <div class="success-screen" id="successScreen">
+    <div class="check-circle">✅</div>
+    <h2>Application Submitted!</h2>
+    <p>Thank you for applying to the Construction Career Pre-Apprenticeship Program.<br>We will review your application and be in touch soon.</p>
+    <button class="reset-btn" onclick="resetForm()">Submit Another Application</button>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'APPS_SCRIPT_URL_PLACEHOLDER';
+
+// ---- Age Auto-Calculate ----
+document.getElementById('dob').addEventListener('change', function() {
+  const dob = new Date(this.value);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  document.getElementById('age').value = age >= 0 ? age : '';
+
+  // Auto-expand guardian section if under 18
+  const isMinor = age < 18 && age >= 0;
+  const section = document.getElementById('guardianFields');
+  const toggle = document.getElementById('guardianToggle');
+  const sigField = document.getElementById('guardianSigField');
+  if (isMinor) {
+    section.classList.add('expanded');
+    toggle.classList.add('open');
+    sigField.style.display = 'block';
+    initSignature('guardian');
+  } else {
+    section.classList.remove('expanded');
+    toggle.classList.remove('open');
+    sigField.style.display = 'none';
+  }
+  updateGuardianToggleText(isMinor);
+});
+
+function updateGuardianToggleText(isMinor) {
+  const el = document.getElementById('guardianToggleText');
+  if (isMinor) {
+    el.innerHTML = 'Applicant is <strong>under 18</strong> — parent/guardian info required';
+  } else {
+    el.innerHTML = 'I am <strong>under 18</strong> — click to expand';
+  }
+}
+
+function toggleGuardianSection() {
+  const section = document.getElementById('guardianFields');
+  const toggle = document.getElementById('guardianToggle');
+  const sigField = document.getElementById('guardianSigField');
+  section.classList.toggle('expanded');
+  toggle.classList.toggle('open');
+  const expanded = section.classList.contains('expanded');
+  sigField.style.display = expanded ? 'block' : 'none';
+  if (expanded) initSignature('guardian');
+}
+
+// ---- Radio/Checkbox Styling ----
+document.querySelectorAll('.radio-option input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    this.closest('.radio-group').querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+    this.closest('.radio-option').classList.add('selected');
+
+    // Show/hide "other program" field
+    if (this.name === 'inAnotherProgram') {
+      document.getElementById('otherProgramField').style.display = this.value === 'Yes' ? 'block' : 'none';
+    }
+  });
+});
+
+document.querySelectorAll('.program-chip input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', function() {
+    this.closest('.program-chip').classList.toggle('selected', this.checked);
+  });
+});
+
+// ---- File Upload Display ----
+function showFileName(input, displayId) {
+  const el = document.getElementById(displayId);
+  el.textContent = input.files.length > 0 ? '✓ ' + input.files[0].name : '';
+}
+
+// ---- Signature Pads ----
+const sigData = { applicant: { drawing: false, hasContent: false }, guardian: { drawing: false, hasContent: false } };
+
+function initSignature(type) {
+  const canvas = document.getElementById(type + 'Sig');
+  if (canvas.dataset.initialized) return;
+  canvas.dataset.initialized = 'true';
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * 2;
+  canvas.height = rect.height * 2;
+  ctx.scale(2, 2);
+  ctx.strokeStyle = '#1a2744';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    sigData[type].drawing = true;
+    const p = getPos(e);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+  }
+  function draw(e) {
+    if (!sigData[type].drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    sigData[type].hasContent = true;
+    canvas.classList.add('signed');
+    document.getElementById(type + 'SigClear').classList.add('visible');
+  }
+  function endDraw() { sigData[type].drawing = false; }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+}
+
+function clearSignature(type) {
+  const canvas = document.getElementById(type + 'Sig');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  sigData[type].hasContent = false;
+  canvas.classList.remove('signed');
+  document.getElementById(type + 'SigClear').classList.remove('visible');
+}
+
+function getSignatureData(type) {
+  if (!sigData[type].hasContent) return null;
+  const canvas = document.getElementById(type + 'Sig');
+  return canvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
+}
+
+// Init applicant signature on load
+window.addEventListener('DOMContentLoaded', () => {
+  initSignature('applicant');
+  document.getElementById('dateSubmitted').valueAsDate = new Date();
+});
+
+// ---- File to Base64 ----
+function fileToBase64(file) {
+  return new Promise((resolve) => {
+    if (!file) { resolve(null); return; }
+    const reader = new FileReader();
+    reader.onload = () => resolve({
+      name: file.name,
+      mimeType: file.type || 'application/octet-stream',
+      data: reader.result.replace(/^data:[^;]*;base64,/, '')
+    });
+    reader.readAsDataURL(file);
+  });
+}
+
+// ---- Validation ----
+function getRadioValue(name) {
+  const r = document.querySelector('input[name="' + name + '"]:checked');
+  return r ? r.value : '';
+}
+
+function showAlert(msg, type) {
+  const box = document.getElementById('alertBox');
+  box.innerHTML = '<div class="alert ' + type + '">' + msg + '</div>';
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function validate() {
+  const required = [
+    ['firstName', 'First Name'],
+    ['lastName', 'Last Name'],
+    ['dob', 'Date of Birth'],
+    ['phone', 'Phone Number'],
+    ['email', 'Email Address'],
+    ['address', 'Home Address'],
+    ['cityStateZip', 'City, State, ZIP'],
+    ['school', 'Current/Recent School'],
+    ['highestGrade', 'Highest Grade Completed'],
+    ['emergencyName', 'Emergency Contact Name'],
+    ['emergencyPhone', 'Emergency Contact Phone'],
+    ['emergencyRelationship', 'Emergency Contact Relationship'],
+    ['whyInterested', 'Why Interested'],
+    ['dateSubmitted', 'Date Submitted']
+  ];
+  for (const [id, label] of required) {
+    if (!document.getElementById(id).value.trim()) {
+      showAlert('Please fill in: <strong>' + label + '</strong>', 'error');
+      return false;
+    }
+  }
+
+  const radios = [
+    ['preferredContact', 'Preferred Method of Contact'],
+    ['enrolledInSchool', 'Are you currently enrolled in school?'],
+    ['currentlyWorking', 'Are you currently working?'],
+    ['inAnotherProgram', 'Are you in another program?'],
+    ['transportation', 'Do you have reliable transportation?'],
+    ['experienceLevel', 'Previous experience level'],
+    ['infoAccurate', 'Confirm information is accurate'],
+    ['understandsNoGuarantee', 'Understand no guarantee of acceptance']
+  ];
+  for (const [name, label] of radios) {
+    if (!getRadioValue(name)) {
+      showAlert('Please select: <strong>' + label + '</strong>', 'error');
+      return false;
+    }
+  }
+
+  // Check program areas
+  const areas = document.querySelectorAll('#programAreas input:checked');
+  if (areas.length === 0) {
+    showAlert('Please select at least one <strong>Program Area</strong> of interest.', 'error');
+    return false;
+  }
+
+  // Consent checks
+  if (getRadioValue('infoAccurate') !== 'Yes') {
+    showAlert('You must confirm that the information you provided is accurate.', 'error');
+    return false;
+  }
+  if (getRadioValue('understandsNoGuarantee') !== 'Yes') {
+    showAlert('You must acknowledge that submission does not guarantee acceptance.', 'error');
+    return false;
+  }
+
+  // Applicant signature
+  if (!sigData.applicant.hasContent) {
+    showAlert('Please provide your <strong>Applicant Signature</strong>.', 'error');
+    return false;
+  }
+
+  // Guardian validation if under 18
+  const age = parseInt(document.getElementById('age').value);
+  const guardianExpanded = document.getElementById('guardianFields').classList.contains('expanded');
+  if ((age < 18 && age >= 0) || guardianExpanded) {
+    const gFields = [
+      ['guardianName', 'Parent/Guardian Name'],
+      ['guardianPhone', 'Parent/Guardian Phone'],
+      ['guardianRelationship', 'Relationship to Applicant (Parent/Guardian)']
+    ];
+    for (const [id, label] of gFields) {
+      if (!document.getElementById(id).value.trim()) {
+        showAlert('Please fill in: <strong>' + label + '</strong>', 'error');
+        return false;
+      }
+    }
+    if (!sigData.guardian.hasContent) {
+      showAlert('Please provide the <strong>Parent/Guardian Signature</strong>.', 'error');
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// ---- Submit ----
+async function submitForm() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('alertBox').innerHTML = '';
+
+  const programAreas = Array.from(document.querySelectorAll('#programAreas input:checked')).map(c => c.value);
+  const age = parseInt(document.getElementById('age').value);
+  const isMinor = age < 18 || document.getElementById('guardianFields').classList.contains('expanded');
+
+  // Collect file uploads
+  const [resume, certs, other] = await Promise.all([
+    fileToBase64(document.getElementById('resumeFile').files[0]),
+    fileToBase64(document.getElementById('certsFile').files[0]),
+    fileToBase64(document.getElementById('otherFile').files[0])
+  ]);
+
+  const payload = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    dob: document.getElementById('dob').value,
+    age: document.getElementById('age').value,
+    phone: document.getElementById('phone').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    cityStateZip: document.getElementById('cityStateZip').value.trim(),
+    preferredContact: getRadioValue('preferredContact'),
+    isMinor: isMinor,
+    guardianName: isMinor ? document.getElementById('guardianName').value.trim() : '',
+    guardianPhone: isMinor ? document.getElementById('guardianPhone').value.trim() : '',
+    guardianEmail: document.getElementById('guardianEmail').value.trim(),
+    guardianRelationship: isMinor ? document.getElementById('guardianRelationship').value.trim() : '',
+    enrolledInSchool: getRadioValue('enrolledInSchool'),
+    school: document.getElementById('school').value.trim(),
+    highestGrade: document.getElementById('highestGrade').value,
+    currentlyWorking: getRadioValue('currentlyWorking'),
+    inAnotherProgram: getRadioValue('inAnotherProgram'),
+    otherProgramName: document.getElementById('otherProgramName').value.trim(),
+    transportation: getRadioValue('transportation'),
+    scheduleLimitations: document.getElementById('scheduleLimitations').value.trim(),
+    emergencyName: document.getElementById('emergencyName').value.trim(),
+    emergencyPhone: document.getElementById('emergencyPhone').value.trim(),
+    emergencyRelationship: document.getElementById('emergencyRelationship').value.trim(),
+    whyInterested: document.getElementById('whyInterested').value.trim(),
+    experienceLevel: getRadioValue('experienceLevel'),
+    experienceDescription: document.getElementById('experienceDescription').value.trim(),
+    programAreas: programAreas.join(', '),
+    resume: resume,
+    certifications: certs,
+    otherDocuments: other,
+    infoAccurate: getRadioValue('infoAccurate'),
+    understandsNoGuarantee: getRadioValue('understandsNoGuarantee'),
+    applicantSignature: getSignatureData('applicant'),
+    dateSubmitted: document.getElementById('dateSubmitted').value,
+    guardianSignature: isMinor ? getSignatureData('guardian') : null
+  };
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    });
+
+    let result;
+    try { result = await resp.json(); } catch(e) {
+      // If we can't parse response (opaque redirect), assume success
+      result = { status: 'success' };
+    }
+
+    if (result.status === 'success' || !result.status) {
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      showAlert('Submission failed: ' + (result.message || 'Unknown error. Please try again.'), 'error');
+    }
+  } catch (err) {
+    // Network error — still might have succeeded due to redirect
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } finally {
+    btn.disabled = false;
+    document.getElementById('loadingOverlay').classList.remove('active');
+  }
+}
+
+// ---- Reset ----
+function resetForm() {
+  document.getElementById('formContainer').style.display = 'block';
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('intakeForm').reset();
+  document.getElementById('alertBox').innerHTML = '';
+
+  // Reset radio/checkbox styling
+  document.querySelectorAll('.radio-option, .checkbox-option, .program-chip').forEach(el => el.classList.remove('selected'));
+
+  // Reset file names
+  ['resumeFileName', 'certsFileName', 'otherFileName'].forEach(id => document.getElementById(id).textContent = '');
+
+  // Reset signatures
+  clearSignature('applicant');
+  if (sigData.guardian.hasContent) clearSignature('guardian');
+
+  // Collapse guardian section
+  document.getElementById('guardianFields').classList.remove('expanded');
+  document.getElementById('guardianToggle').classList.remove('open');
+  document.getElementById('guardianSigField').style.display = 'none';
+  document.getElementById('otherProgramField').style.display = 'none';
+
+  // Reset date
+  document.getElementById('dateSubmitted').valueAsDate = new Date();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
