@@ -445,7 +445,7 @@
         <div class="file-upload-area" onclick="this.querySelector('input').click()">
           <div class="upload-icon">🏅</div>
           <div class="upload-text">Click to upload certifications</div>
-          <input type="file" id="certsFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx,.csv" onchange="showFileName(this, 'certsFileName')">
+          <input type="file" id="certsFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx,.csv" multiple onchange="showFileNames(this, 'certsFileName')">
         </div>
         <div class="file-name" id="certsFileName"></div>
       </div>
@@ -596,6 +596,13 @@ document.querySelectorAll('.program-chip input[type="checkbox"]').forEach(cb => 
 function showFileName(input, displayId) {
   const el = document.getElementById(displayId);
   el.textContent = input.files.length > 0 ? '✓ ' + input.files[0].name : '';
+}
+
+function showFileNames(input, displayId) {
+  const el = document.getElementById(displayId);
+  if (input.files.length === 0) { el.textContent = ''; return; }
+  const names = Array.from(input.files).map(function(f) { return f.name; });
+  el.textContent = '✓ ' + names.join(', ');
 }
 
 // ---- Signature Pads ----
@@ -795,11 +802,13 @@ async function submitForm() {
   const isMinor = age < 18 || document.getElementById('guardianFields').classList.contains('expanded');
 
   // Collect file uploads
-  const [resume, certs, other] = await Promise.all([
+  const certFiles = document.getElementById('certsFile').files;
+  const certPromises = Array.from(certFiles).map(function(f) { return fileToBase64(f); });
+  const [resume, other] = await Promise.all([
     fileToBase64(document.getElementById('resumeFile').files[0]),
-    fileToBase64(document.getElementById('certsFile').files[0]),
     fileToBase64(document.getElementById('otherFile').files[0])
   ]);
+  const certs = await Promise.all(certPromises);
 
   const payload = {
     firstName: document.getElementById('firstName').value.trim(),
@@ -832,7 +841,7 @@ async function submitForm() {
     experienceDescription: document.getElementById('experienceDescription').value.trim(),
     programAreas: programAreas.join(', '),
     resume: resume,
-    certifications: certs,
+    certFiles: certs,
     otherDocuments: other,
     infoAccurate: getRadioValue('infoAccurate'),
     understandsNoGuarantee: getRadioValue('understandsNoGuarantee'),

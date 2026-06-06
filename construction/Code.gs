@@ -29,9 +29,29 @@ function doPost(e) {
     var submittedAt = Utilities.formatDate(new Date(), 'America/New_York', 'MM/dd/yyyy hh:mm:ss a');
     var folder = getOrCreateFolder();
     var applicantName = (data.firstName || '') + ' ' + (data.lastName || '');
-    var resumeLink = uploadFile(data.resumeFile, data.resumeFileName, applicantName, 'Resume', folder);
-    var certLink = uploadFile(data.certFile, data.certFileName, applicantName, 'Certification', folder);
-    var otherLink = uploadFile(data.otherFile, data.otherFileName, applicantName, 'Other', folder);
+    var resumeObj = data.resume || data.resumeFile || null;
+    var resumeLink = '';
+    if (resumeObj && typeof resumeObj === 'object') {
+      resumeLink = uploadFile(resumeObj.data, resumeObj.name, applicantName, 'Resume', folder);
+    } else if (data.resumeFile) {
+      resumeLink = uploadFile(data.resumeFile, data.resumeFileName, applicantName, 'Resume', folder);
+    }
+    var certLinks = [];
+    var certFilesArr = data.certFiles || [];
+    for (var i = 0; i < certFilesArr.length; i++) {
+      if (certFilesArr[i] && certFilesArr[i].data) {
+        var link = uploadFile(certFilesArr[i].data, certFilesArr[i].name, applicantName, 'Cert_' + (i + 1), folder);
+        if (link) certLinks.push(link);
+      }
+    }
+    var certLink = certLinks.join(', ');
+    var otherObj = data.otherDocuments || data.otherFile || null;
+    var otherLink = '';
+    if (otherObj && typeof otherObj === 'object' && !otherObj.length) {
+      otherLink = uploadFile(otherObj.data, otherObj.name, applicantName, 'Other', folder);
+    } else if (data.otherFile) {
+      otherLink = uploadFile(data.otherFile, data.otherFileName, applicantName, 'Other', folder);
+    }
     var sigLink = uploadSignature(data.applicantSignature, applicantName, 'Applicant_Signature', folder);
     var guardianSigLink = uploadSignature(data.guardianSignature, applicantName, 'Guardian_Signature', folder);
     var programAreas = '';
